@@ -1,13 +1,5 @@
-name: freecad_bundle
+name: toponaming_package
 on:
-  schedule:
-   - cron: "0 12 * * 0/4"
-  push:
-    branches:
-      - "*"
-  pull_request:
-    branches:
-      - master
   workflow_dispatch:
 
 jobs:
@@ -17,7 +9,7 @@ jobs:
       max-parallel: 4
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         python: [py38, py310]
         tag: ["weekly-builds"]
         docs: ["0"]
@@ -29,10 +21,6 @@ jobs:
           
 
     steps:
-      - if: matrix.os == 'windows-latest'
-        name: msys2
-        uses: msys2/setup-msys2@v2
-
       - uses: actions/checkout@v2
         name: Checkout
 
@@ -41,11 +29,6 @@ jobs:
           auto-update-conda: true
           use-mamba: true
           miniforge-variant: Mambaforge
-
-      - if: matrix.os == 'macos-latest'
-        name: update mac
-        run: |
-          brew update;
 
       - if: matrix.os == 'ubuntu-latest'
         name: update linux
@@ -57,27 +40,6 @@ jobs:
           curl -LO https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage;
           chmod a+x appimagetool-x86_64.AppImage;
 
-      - if: matrix.os != 'windows-latest'
-        name: install conda dependencies for unix
-        run: |
-          mamba env config vars set MAMBA_NO_BANNER=1
-          mamba install p7zip sed curl -y -c conda-forge;
-          mamba config --show channels;
-
-      - if: matrix.os == 'windows-latest'
-        name: install conda dependencies for windows
-        run: |
-          mamba env config vars set MAMBA_NO_BANNER=1
-          mamba install curl -y -c conda-forge;
-
-      - if: matrix.os == 'macos-latest'
-        name: create osx bundle
-        run: "bash ./create_bundle.sh"
-        working-directory: conda/osx
-        env:
-            DEPLOY_RELEASE: ${{ matrix.tag }}
-            ADD_DOCS: ${{ matrix.docs }}
-
       - if: matrix.os == 'ubuntu-latest'
         name: create linux bundle
         run: "bash ./create_bundle.sh"
@@ -85,25 +47,6 @@ jobs:
         env:
             DEPLOY_RELEASE: ${{ matrix.tag }}
             ADD_DOCS: ${{ matrix.docs }}
-
-      - if: matrix.os == 'windows-latest'
-        name: create windows bundle
-        shell: cmd
-        run: "call create_bundle.bat"
-        working-directory: conda\win_${{ matrix.python }}
-        env:
-            DEPLOY_RELEASE: ${{ matrix.tag }}
-            ADD_DOCS: ${{ matrix.docs }}
-
-      - if: (matrix.os == 'macos-latest' && github.event_name != 'pull_request')
-        name: delete old mac assets
-        uses: mknejp/delete-release-assets@v1
-        with:
-          token: ${{ github.token }}
-          tag: ${{ matrix.tag }}
-          assets: FreeCAD*macOS-x86_64*
-          fail-if-no-assets: false
-          fail-if-no-release: false 
 
       - if: (matrix.os == 'ubuntu-latest' && github.event_name != 'pull_request')
         name: delete old linux assets
@@ -115,42 +58,12 @@ jobs:
           fail-if-no-assets: false
           fail-if-no-release: false
 
-      - if: (matrix.os == 'windows-latest' && github.event_name != 'pull_request')
-        name: delete old win assets
-        uses: mknejp/delete-release-assets@v1
-        with:
-          token: ${{ github.token }}
-          tag: ${{ matrix.tag }}
-          assets: FreeCAD*Win*${{ matrix.python }}*
-          fail-if-no-assets: false
-          fail-if-no-release: false
-
       - if: (matrix.os == 'ubuntu-latest' && github.event_name != 'pull_request')
         name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: conda/linux/FreeCAD*
-          tag: ${{ matrix.tag }}
-          overwrite: true
-          file_glob: true
-
-      - if: (matrix.os == 'macos-latest' && github.event_name != 'pull_request')
-        name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: conda/osx/FreeCAD*
-          tag: ${{ matrix.tag }}
-          overwrite: true
-          file_glob: true
-          
-      - if: (matrix.os == 'windows-latest' && github.event_name != 'pull_request')
-        name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: conda\win_${{ matrix.python }}\FreeCAD*
           tag: ${{ matrix.tag }}
           overwrite: true
           file_glob: true

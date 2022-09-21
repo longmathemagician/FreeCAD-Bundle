@@ -4,9 +4,6 @@ name: source_creation
 
 # Controls when the workflow will run
 on:
-  schedule:
-   - cron: "* 0/4 * * *"
-
   workflow_dispatch:
 
 jobs:
@@ -15,7 +12,7 @@ jobs:
     strategy:
       matrix:
         tag: ["weekly-builds"]
-        branch: ["master"]
+        branch: ["development/toponaming"]
 
     steps:
       - name: Run a multi-line script
