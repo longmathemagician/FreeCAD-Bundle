@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python: [py38, py310]
-        tag: ["weekly-builds"]
+        tag: ["toponaming-build"]
         docs: ["0"]
         exclude:
           - os: macos-latest
