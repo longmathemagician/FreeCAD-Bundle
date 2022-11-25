@@ -11,7 +11,7 @@
 	<key>CFBundleIconFile</key>
 	<string>freecad.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>org.freecadweb.FreeCAD</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
@@ -31,22 +31,57 @@
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
 	<key>NSPrincipalClass</key>
-   	<string>NSApplication</string>	
+	<string>NSApplication</string>	
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
 	<key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>FCStd</string>
+                <string>FCMat</string>
+                <string>FCParam</string>
+            </array>
+            <key>CFBundleTypeIconFile</key>
+            <string>freecad-doc.icns</string>
+            <key>LSIsAppleDefaultForType</key>
+            <true/>
+        </dict>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>FCMacro</string>
+                <string>FCScript</string>
+            </array>
+            <key>CFBundleTypeIconFile</key>
+            <string>freecad-script.icns</string>
+            <key>LSIsAppleDefaultForType</key>
+            <true/>
+        </dict>
+    </array>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleTypeExtensions</key>
+			<key>UTTypeConformsTo</key>
 			<array>
-				<string>FCStd</string>
+				<string>public.data</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>freecad-doc.icns</string>
-			<key>LSIsAppleDefaultForType</key>
-			<true/>
+			<key>UTTypeDescription</key>
+			<string>FreeCAD Document</string>
+			<key>UTTypeIdentifier</key>
+			<string>org.freecad.fcstd</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>FCStd</string>
+				</array>
+			</dict>
 		</dict>
 	</array>
 </dict>

@@ -28,6 +28,9 @@ echo -e "################"
 mamba list -p ${conda_env} > APP/FreeCAD.app/Contents/packages.txt
 sed -i "1s/.*/\n\nLIST OF PACKAGES:/"  APP/FreeCAD.app/Contents/packages.txt
 
+# copy the QuickLook plugin into its final location
+mv ${conda_env}/Library ${conda_env}/../Library
+
 # delete unnecessary stuff
 rm -rf ${conda_env}/include
 find ${conda_env} -name \*.a -delete
@@ -50,6 +53,9 @@ cp qt.conf ${conda_env}/libexec/
 # Remove __pycache__ folders and .pyc files
 find . -path "*/__pycache__/*" -delete
 find . -name "*.pyc" -type f -delete
+
+# qtwebengine fix
+ln -s ./APP/FreeCAD.app/Contents/Resources/resources ./APP/FreeCAD.app/Contents/Resources/Resources
 
 # create the dmg
 hdiutil create -volname "${version_name}" -srcfolder ./APP -ov -format UDZO "${version_name}.dmg"
